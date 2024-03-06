@@ -1,0 +1,25 @@
+<unitsTypes spritesPrefix="DefaultUnitsSprites/">
+	<player 
+		sprite="knight" 
+		armor="10" 
+		regeneration="2"
+		minAttack="10" 
+		maxAttack="20"
+		moveSpeed="1"
+		attackSpeed="1"
+		visionRange="4"
+		maximumInventoryWeight="10"
+		/>
+
+	<orc 
+		sprite="orc" 
+		armor="5" 
+		regeneration="1"
+		minAttack="5" 
+		maxAttack="30"
+		moveSpeed="1"
+		attackSpeed="1"
+		visionRange="3"
+		maximumInventoryWeight="3"
+		/>
+</unitsTypes>
