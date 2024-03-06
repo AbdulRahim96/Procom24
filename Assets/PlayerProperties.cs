@@ -6,11 +6,11 @@ public class PlayerProperties : MonoBehaviour
 {
     public float endurance = 50;
     public float punchForce = 5;
-
+    public ParticleSystem attack, heavyAttack;
     public float speed = 5f; // Adjust this value to control player speed
-
+    public bool special, alternate;
     private Rigidbody2D rb;
-    public Vector3 mousePosition;
+    private Vector3 mousePosition;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -18,15 +18,19 @@ public class PlayerProperties : MonoBehaviour
 
     void Update()
     {
+        MousePosition();
         Movement();
         LookAtCursor();
 
+        special = Input.GetKey(KeyCode.LeftShift);
+        alternate = Input.GetKey(KeyCode.LeftControl);
+
         if (Input.GetMouseButtonDown(0))
         {
-            Attack();
+            if (special) HeavyAttack();
+            else Attack();
 
         }
-        MousePosition();
     }
 
     void Movement()
@@ -63,13 +67,15 @@ public class PlayerProperties : MonoBehaviour
 
     void Attack()
     {
-        print("Attack");
+        attack.Play();
         Vector3 dir = (mousePosition - transform.position).normalized;
         rb.AddForce(dir * punchForce);
     }
 
     void HeavyAttack()
     {
-        rb.AddForce(transform.forward * punchForce * 2, ForceMode2D.Impulse);
+        heavyAttack.Play();
+        Vector3 dir = (mousePosition - transform.position).normalized;
+        rb.AddForce(dir * punchForce * 2);
     }
 }
