@@ -1,16 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class PlayerProperties : MonoBehaviour
 {
     public float endurance = 50;
     public float punchForce = 5;
+    public Transform inner;
     public ParticleSystem attack, heavyAttack;
     public float speed = 5f; // Adjust this value to control player speed
     public bool special, alternate;
+    public PlayerTrigger playerTrigger;
     private Rigidbody2D rb;
     private Vector3 mousePosition;
+    bool throwing, grabbed;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -30,6 +34,15 @@ public class PlayerProperties : MonoBehaviour
             if (special) HeavyAttack();
             else Attack();
 
+        }
+
+        if(Input.GetMouseButton(1))
+        {
+            Grab();
+        }
+        else if(Input.GetMouseButtonUp(1))
+        {
+            Throw();
         }
     }
 
@@ -61,15 +74,18 @@ public class PlayerProperties : MonoBehaviour
         
         Vector3 lookDir = mousePosition - transform.position;
         float angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg;
-        rb.rotation = angle;
+
+        if(!throwing)
+            rb.rotation = angle;
         
     }
 
     void Attack()
     {
         attack.Play();
-        Vector3 dir = (mousePosition - transform.position).normalized;
-        rb.AddForce(dir * punchForce);
+        playerTrigger.transform.DOLocalRotate(new Vector3(0, 0, 360), 0.3f).SetRelative(true).SetEase(Ease.InElastic);
+       // Vector3 dir = (mousePosition - transform.position).normalized;
+       // rb.AddForce(dir * punchForce);
     }
 
     void HeavyAttack()
@@ -77,5 +93,28 @@ public class PlayerProperties : MonoBehaviour
         heavyAttack.Play();
         Vector3 dir = (mousePosition - transform.position).normalized;
         rb.AddForce(dir * punchForce * 2);
+    }
+
+    void Grab()
+    {
+        if(playerTrigger.canGrab)
+        {
+            playerTrigger.Grab();
+            grabbed = true;
+        }
+    }
+
+    public void Throw()
+    {
+        if (!grabbed) return;
+        throwing = true;
+        inner.DOLocalRotate(new Vector3(0, 0, 360), 0.3f).SetRelative(true).SetEase(Ease.InCubic).OnComplete(() =>
+        {
+            Vector3 Dir = mousePosition - transform.position;
+            playerTrigger.Throw(Dir, punchForce);
+            inner.localRotation = Quaternion.identity;
+            throwing = false;
+        });
+        
     }
 }
