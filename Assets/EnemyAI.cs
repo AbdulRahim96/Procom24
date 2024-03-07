@@ -18,6 +18,8 @@ public class EnemyAI : MonoBehaviour
     public GameObject Coins;
     public Transform healthBar;
     public Vector3 healthbarOffset;
+    public GameObject hitEffects;
+    public SpriteRenderer spriteRenderer;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -31,9 +33,12 @@ public class EnemyAI : MonoBehaviour
     {
         if(healthBar)
             healthBar.position = transform.position + healthbarOffset;
-
+        if (spriteRenderer)
+            spriteRenderer.transform.rotation = Quaternion.identity;
 
         if (!canAttack) return;
+
+        spriteRenderer.flipX = player.position.x - transform.position.x > 0;
 
         if (Vector3.Distance(transform.position, player.position) <= AttackDistance)
             attacking();
@@ -110,8 +115,11 @@ public class EnemyAI : MonoBehaviour
             if(onAir)
             {
                 GetComponent<Health>().HealthUpdate(20);
-                collision.gameObject.GetComponent<Health>().HealthUpdate(5);
+                collision.gameObject.GetComponent<Health>().HealthUpdate(5, false);
                 collision.gameObject.GetComponent<Rigidbody2D>().AddForce(-collision.transform.forward * 50000);
+
+                GameObject obj = Instantiate(hitEffects, transform.position, Quaternion.identity);
+                Destroy(obj, 3);
             }
             
         }

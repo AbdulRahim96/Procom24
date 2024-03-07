@@ -5,6 +5,7 @@ using UnityEngine;
 public class EnemyTrigger : MonoBehaviour
 {
     public float damagePower = 10;
+    public bool forAll = false;
     void Start()
     {
         
@@ -15,6 +16,13 @@ public class EnemyTrigger : MonoBehaviour
         if(collision.tag == "Player")
         {
             collision.GetComponent<Health>().HealthUpdate(damagePower);
+        }
+        if(forAll)
+        {
+            if (collision.tag == "enemy")
+            {
+                collision.GetComponent<Health>().HealthUpdate(damagePower * 2);
+            }
         }
     }
 }

@@ -770,6 +770,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  hit: {fileID: 4021103657954561961, guid: 5c755f9bc5253ea418e919994537dcc7, type: 3}
 --- !u!114 &5769979504467585235
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -797,6 +798,7 @@ MonoBehaviour:
   Coins: {fileID: 1042672765740760239, guid: 9c5e4a1a8ae9a09478f528c60352f43b, type: 3}
   healthBar: {fileID: 5769979503190768382}
   healthbarOffset: {x: 0, y: 0.3, z: 0}
+  hitEffects: {fileID: 4021103657954561961, guid: 5c755f9bc5253ea418e919994537dcc7, type: 3}
 --- !u!1 &5769979504531532273
 GameObject:
   m_ObjectHideFlags: 0

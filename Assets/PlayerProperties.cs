@@ -17,7 +17,10 @@ public class PlayerProperties : MonoBehaviour
     public PlayerTrigger playerTrigger;
     private Rigidbody2D rb;
     private Vector3 mousePosition;
-    bool throwing, grabbed;
+    public bool throwing, grabbed;
+    public SpriteRenderer spriteRenderer;
+
+    private bool pressing;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -47,6 +50,8 @@ public class PlayerProperties : MonoBehaviour
         {
             Throw();
         }
+
+        
     }
 
     void Movement()
@@ -55,6 +60,7 @@ public class PlayerProperties : MonoBehaviour
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
 
+        pressing = moveHorizontal != 0;
         // Movement vector
         Vector2 movement = new Vector2(moveHorizontal, moveVertical);
 
@@ -63,6 +69,12 @@ public class PlayerProperties : MonoBehaviour
 
         // Clamp velocity to avoid diagonal movement being faster
         rb.velocity = Vector2.ClampMagnitude(rb.velocity, speed);
+
+        if (spriteRenderer)
+            spriteRenderer.transform.rotation = Quaternion.identity;
+
+        if(pressing)
+            spriteRenderer.flipX = moveHorizontal > 0;
     }
 
     void MousePosition()
@@ -106,8 +118,8 @@ public class PlayerProperties : MonoBehaviour
         attack.Play();
         playerTrigger.transform.DOLocalRotate(new Vector3(0, 0, -360), 0.3f).SetRelative(true).SetEase(Ease.InElastic);
         StartCoroutine(delay());
-       // Vector3 dir = (mousePosition - transform.position).normalized;
-       // rb.AddForce(dir * punchForce);
+        GameObject.Find("light attack").GetComponent<AudioSource>().Play();
+       
     }
 
     void HeavyAttack()
@@ -120,6 +132,7 @@ public class PlayerProperties : MonoBehaviour
         rb.AddForce(dir * punchForce * 10);
         playerTrigger.transform.DOLocalRotate(new Vector3(0, 0, -360), 0.3f).SetRelative(true).SetEase(Ease.InElastic);
         StartCoroutine(delay(2));
+        GameObject.Find("heavy attack").GetComponent<AudioSource>().Play();
     }
 
     void Grab()
@@ -146,7 +159,8 @@ public class PlayerProperties : MonoBehaviour
             inner.localRotation = Quaternion.identity;
             throwing = false;
         });
-        
+        GameObject.Find("throw").GetComponent<AudioSource>().Play();
+
     }
 
     public void Drop()
