@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +10,9 @@ public class EnemyAI : MonoBehaviour
     public float speed;
     public bool alreadyAttacked;
     public bool canAttack = true;
-    public Transform player;
+    public Transform player, sword;
+    public ParticleSystem attack;
+    public LayerMask layer;
     public bool onAir = false;
     private Rigidbody2D rb;
     public GameObject Coins;
@@ -67,7 +70,9 @@ public class EnemyAI : MonoBehaviour
 
     void Attack()
     {
-
+        attack.Play();
+        sword.DOLocalRotate(new Vector3(0, 0, -360), 0.3f).SetRelative(true).SetEase(Ease.InElastic);
+        StartCoroutine(attackCollider());
     }
 
     void resetAttack()
@@ -88,13 +93,28 @@ public class EnemyAI : MonoBehaviour
         canAttack = true;
     }
 
+    IEnumerator attackCollider()
+    {
+        yield return new WaitForSeconds(0.2f);
+        sword.GetComponent<Collider2D>().enabled = true;
+        yield return new WaitForSeconds(0.2f);
+        sword.GetComponent<Collider2D>().enabled = false;
+    }
+
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "enemy" && onAir)
+        if (collision.gameObject.tag == "enemy")
         {
-            GetComponent<Health>().HealthUpdate(20);
-            collision.gameObject.GetComponent<Health>().HealthUpdate(5);
-            collision.gameObject.GetComponent<Rigidbody2D>().AddForce(-collision.transform.forward * 50000);
+            //if (!canAttack)
+            //    FindObjectOfType<PlayerProperties>().Drop();
+            if(onAir)
+            {
+                GetComponent<Health>().HealthUpdate(20);
+                collision.gameObject.GetComponent<Health>().HealthUpdate(5);
+                collision.gameObject.GetComponent<Rigidbody2D>().AddForce(-collision.transform.forward * 50000);
+            }
+            
         }
     }
 

@@ -45,6 +45,7 @@ public class PlayerTrigger : MonoBehaviour
         obj.GetComponent<Rigidbody2D>().isKinematic = true;
         obj.localPosition = Vector3.zero;
         obj.GetComponent<EnemyAI>().canAttack = false;
+        alreadyGrabbed = true;
     }
 
     public void Throw(Vector3 direction, float speed)
@@ -53,6 +54,14 @@ public class PlayerTrigger : MonoBehaviour
         obj.GetComponent<Rigidbody2D>().isKinematic = false;
         obj.GetComponent<Rigidbody2D>().AddForce(direction * speed);
         obj.GetComponent<EnemyAI>().CanAttack();
+        alreadyGrabbed = false;
+    }
+
+    public void Drop()
+    {
+        obj.parent = null;
+        obj.GetComponent<Rigidbody2D>().isKinematic = false;
+        obj.GetComponent<EnemyAI>().canAttack = true;
     }
 
 

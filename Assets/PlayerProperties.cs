@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using DG.Tweening;
 
 public class PlayerProperties : MonoBehaviour
@@ -9,6 +10,7 @@ public class PlayerProperties : MonoBehaviour
     public float punchForce = 5;
     public float power = 10;
     public Transform inner;
+    public Slider enduranceSlider;
     public ParticleSystem attack, heavyAttack;
     public float speed = 5f; // Adjust this value to control player speed
     public bool special, alternate;
@@ -26,7 +28,7 @@ public class PlayerProperties : MonoBehaviour
         MousePosition();
         Movement();
         LookAtCursor();
-
+        Endurance();
         special = Input.GetKey(KeyCode.LeftShift);
         alternate = Input.GetKey(KeyCode.LeftControl);
 
@@ -81,6 +83,24 @@ public class PlayerProperties : MonoBehaviour
         
     }
 
+    void Endurance()
+    {
+        if(grabbed)
+        {
+            endurance -= Time.deltaTime;
+        }
+        else
+            endurance += Time.deltaTime;
+        enduranceSlider.value = endurance;
+    }
+
+    void UpdateEndurance(float val)
+    {
+        endurance += val;
+        if (endurance <= 0) endurance = 0;
+        if (endurance >= 100) endurance = 100;
+    }
+
     void Attack()
     {
         attack.Play();
@@ -92,6 +112,8 @@ public class PlayerProperties : MonoBehaviour
 
     void HeavyAttack()
     {
+        if (endurance < 10) return;
+        UpdateEndurance(-10);
         heavyAttack.Play();
         Vector3 dir = (mousePosition - transform.position).normalized;
         rb.AddForce(dir * punchForce * 10);
@@ -134,7 +156,7 @@ public class PlayerProperties : MonoBehaviour
 
     IEnumerator delay(float pow = 1)
     {
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.15f);
         playerTrigger.Attacking(power * pow);
     }
 }
