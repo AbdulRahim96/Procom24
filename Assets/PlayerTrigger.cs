@@ -7,6 +7,10 @@ public class PlayerTrigger : MonoBehaviour
     public bool canGrab;
     public Transform obj;
     public Transform grabbingPoint;
+    public float attackRadius = 1;
+    public LayerMask enemyLayer;
+    public bool alreadyGrabbed;
+    public Collider2D[] enemies;
     // Start is called before the first frame update
     void Start()
     {
@@ -15,6 +19,8 @@ public class PlayerTrigger : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (alreadyGrabbed) return;
+
         if(collision.tag == "enemy")
         {
             canGrab = true;
@@ -24,6 +30,8 @@ public class PlayerTrigger : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
+        if (alreadyGrabbed) return;
+
         if (collision.tag == "enemy")
         {
             canGrab = false;
@@ -36,6 +44,7 @@ public class PlayerTrigger : MonoBehaviour
         obj.SetParent(grabbingPoint);
         obj.GetComponent<Rigidbody2D>().isKinematic = true;
         obj.localPosition = Vector3.zero;
+        obj.GetComponent<EnemyAI>().canAttack = false;
     }
 
     public void Throw(Vector3 direction, float speed)
@@ -43,5 +52,22 @@ public class PlayerTrigger : MonoBehaviour
         obj.parent = null;
         obj.GetComponent<Rigidbody2D>().isKinematic = false;
         obj.GetComponent<Rigidbody2D>().AddForce(direction * speed);
+        obj.GetComponent<EnemyAI>().CanAttack();
+    }
+
+
+    public void Attacking(float attackDamage)
+    {
+        enemies = Physics2D.OverlapCircleAll(grabbingPoint.position, attackRadius, enemyLayer);
+
+        foreach (var enemy in enemies)
+        {
+            enemy.GetComponent<Health>().HealthUpdate(attackDamage);
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawWireSphere(grabbingPoint.position, attackRadius);
     }
 }

@@ -7,6 +7,7 @@ public class PlayerProperties : MonoBehaviour
 {
     public float endurance = 50;
     public float punchForce = 5;
+    public float power = 10;
     public Transform inner;
     public ParticleSystem attack, heavyAttack;
     public float speed = 5f; // Adjust this value to control player speed
@@ -83,7 +84,8 @@ public class PlayerProperties : MonoBehaviour
     void Attack()
     {
         attack.Play();
-        playerTrigger.transform.DOLocalRotate(new Vector3(0, 0, 360), 0.3f).SetRelative(true).SetEase(Ease.InElastic);
+        playerTrigger.transform.DOLocalRotate(new Vector3(0, 0, -360), 0.3f).SetRelative(true).SetEase(Ease.InElastic);
+        StartCoroutine(delay());
        // Vector3 dir = (mousePosition - transform.position).normalized;
        // rb.AddForce(dir * punchForce);
     }
@@ -92,11 +94,16 @@ public class PlayerProperties : MonoBehaviour
     {
         heavyAttack.Play();
         Vector3 dir = (mousePosition - transform.position).normalized;
-        rb.AddForce(dir * punchForce * 2);
+        rb.AddForce(dir * punchForce * 10);
+        playerTrigger.transform.DOLocalRotate(new Vector3(0, 0, -360), 0.3f).SetRelative(true).SetEase(Ease.InElastic);
+        StartCoroutine(delay(2));
     }
 
     void Grab()
     {
+        if (grabbed) return;
+        if (throwing) return;
+
         if(playerTrigger.canGrab)
         {
             playerTrigger.Grab();
@@ -108,6 +115,7 @@ public class PlayerProperties : MonoBehaviour
     {
         if (!grabbed) return;
         throwing = true;
+        grabbed = false;
         inner.DOLocalRotate(new Vector3(0, 0, 360), 0.3f).SetRelative(true).SetEase(Ease.InCubic).OnComplete(() =>
         {
             Vector3 Dir = mousePosition - transform.position;
@@ -116,5 +124,17 @@ public class PlayerProperties : MonoBehaviour
             throwing = false;
         });
         
+    }
+
+    public void Drop()
+    {
+        throwing = false;
+        grabbed = false;
+    }
+
+    IEnumerator delay(float pow = 1)
+    {
+        yield return new WaitForSeconds(0.3f);
+        playerTrigger.Attacking(power * pow);
     }
 }
