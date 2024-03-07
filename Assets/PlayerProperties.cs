@@ -12,7 +12,7 @@ public class PlayerProperties : MonoBehaviour
     public Transform inner;
     public Slider enduranceSlider;
     public ParticleSystem attack, heavyAttack;
-    public float speed = 5f; // Adjust this value to control player speed
+    public float speed = 5f; 
     public bool special, alternate;
     public PlayerTrigger playerTrigger;
     private Rigidbody2D rb;
@@ -113,6 +113,7 @@ public class PlayerProperties : MonoBehaviour
     void HeavyAttack()
     {
         if (endurance < 10) return;
+        //Camera.main.DOShakePosition(0.3f, 1);
         UpdateEndurance(-10);
         heavyAttack.Play();
         Vector3 dir = (mousePosition - transform.position).normalized;

@@ -9,7 +9,7 @@ public class Boss : MonoBehaviour
     public float speed;
     public bool canAttack = true;
     public Transform player, sword;
-    public ParticleSystem attack;
+    public ParticleSystem laserAttack;
     private Rigidbody2D rb;
     public Transform healthBar;
     public Vector3 healthbarOffset;
@@ -37,7 +37,6 @@ public class Boss : MonoBehaviour
 
     void Chase()
     {
-        print("chase");
         if (player != null)
         {
             // Calculate the direction towards the player
@@ -56,5 +55,10 @@ public class Boss : MonoBehaviour
     {
         
 
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawWireSphere(transform.position, AttackDistance);
     }
 }

@@ -43,7 +43,6 @@ public class EnemyAI : MonoBehaviour
 
     void Chase()
     {
-        print("chase");
         if (player != null)
         {
             // Calculate the direction towards the player
