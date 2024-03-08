@@ -14,6 +14,7 @@ public class CollectCoins : MonoBehaviour
             {
                 GameLogic.instance.UpdateCoins(1);
                 GameObject.Find("coins").GetComponent<AudioSource>().Play();
+                collision.gameObject.GetComponent<Health>().HealthUpdate(-1, false);
                 Destroy(gameObject);
             });
         }

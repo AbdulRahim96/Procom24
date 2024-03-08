@@ -20,6 +20,8 @@ public class Boss : MonoBehaviour
     public GameObject laserLine, tntLines;
     public bool isAttacking = false;
     public SpriteRenderer spriteRenderer;
+
+    public GameObject dieEffect;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,7 +29,6 @@ public class Boss : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").transform;
         velnurable = false;
         healthBar.parent = null;
-        DisableShield();
     }
 
     void FixedUpdate()
@@ -65,6 +66,7 @@ public class Boss : MonoBehaviour
     {
         laserLine.SetActive(true);
         laserAttack.Play();
+        GameLogic.Print("Watchout from Laser!");
         laserAttack.GetComponent<AudioSource>().Play();
         await Delay(8);
         laserLine.SetActive(false);
@@ -76,6 +78,7 @@ public class Boss : MonoBehaviour
         AttackDistance = 1.3f;
         speed = 0.8f;
         sword.DOScale(1, 0.5f);
+        GameLogic.Print("Move away from the blades!");
         sword.DOLocalRotate(new Vector3(0, 0, 3600), 20).SetRelative(true).SetEase(Ease.InOutExpo).OnComplete(() =>
         {
             StopSword();
@@ -94,6 +97,10 @@ public class Boss : MonoBehaviour
         shield.Stop();
         velnurable = true;
         canAttack = false;
+        laserAttack.Stop();
+        GameLogic.Print("Quick! Now is your Time");
+        laserAttack.GetComponent<AudioSource>().Stop();
+        StopSword();
         await Delay(10);
         shield.Play();
         velnurable = false;
@@ -150,7 +157,7 @@ public class Boss : MonoBehaviour
     async void ThrowTNT()
     {
         tntLines.SetActive(true);
-        await Delay(1);
+        await Delay(3);
         isAttacking = false;
         GameObject obj = Instantiate(tnts, transform.position, tntLines.transform.rotation);
         obj.transform.DOScale(2, 1);
@@ -161,6 +168,35 @@ public class Boss : MonoBehaviour
         {
             tnt.enabled = true;
         }
+
+        GameLogic.Print("Explode the TNT to disable Boss Shield");
+    }
+
+    public async void Dead()
+    {
+        canAttack = false;
+        for (int i = 0; i < 3; i++)
+        {
+            Instantiate(dieEffect, transform.position, Quaternion.identity);
+            await Delay(0.5f);
+        }
+
+        EnemyAI[] enemies = FindObjectsOfType<EnemyAI>();
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            enemies[i].Dead();
+        }
+        for (int i = 0; i < GameLogic.instance.spawns.Length; i++)
+        {
+            GameLogic.instance.spawns[i].SetActive(false);
+        }
+
+
+        SpriteRenderer background = GameObject.Find("background").GetComponent<SpriteRenderer>();
+        background.DOColor(Color.white, 3);
+        GameLogic.instance.fireBorders.SetActive(true);
+
+        Destroy(gameObject);
     }
 
     public static Task Delay(float seconds)

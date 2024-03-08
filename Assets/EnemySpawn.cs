@@ -19,6 +19,8 @@ public class EnemySpawn : MonoBehaviour
     {
         if (GameLogic.isPaused) return;
 
+        spawnTime -= Time.deltaTime;
+
         if (spawnTime <= 0)
         {
             int ran = Random.Range(0, positions.Length);

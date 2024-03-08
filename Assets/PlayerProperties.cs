@@ -7,6 +7,7 @@ using DG.Tweening;
 public class PlayerProperties : MonoBehaviour
 {
     public float endurance = 50;
+    public float enduranceRate = 1;
     public float punchForce = 5;
     public float power = 10;
     public Transform inner;
@@ -19,7 +20,7 @@ public class PlayerProperties : MonoBehaviour
     private Vector3 mousePosition;
     public bool throwing, grabbed;
     public SpriteRenderer spriteRenderer;
-
+    bool attacking;
     private bool pressing;
     void Start()
     {
@@ -28,6 +29,8 @@ public class PlayerProperties : MonoBehaviour
 
     void Update()
     {
+        if (GameLogic.isPaused) return;
+
         MousePosition();
         Movement();
         LookAtCursor();
@@ -45,10 +48,21 @@ public class PlayerProperties : MonoBehaviour
         if(Input.GetMouseButton(1))
         {
             Grab();
+            if(playerTrigger.obj == null)
+            {
+                throwing = false;
+                grabbed = false;
+            }
         }
         else if(Input.GetMouseButtonUp(1))
         {
-            Throw();
+            if (playerTrigger.obj == null)
+            {
+                throwing = false;
+                grabbed = false;
+            }
+            else
+                Throw();
         }
 
         
@@ -73,8 +87,7 @@ public class PlayerProperties : MonoBehaviour
         if (spriteRenderer)
             spriteRenderer.transform.rotation = Quaternion.identity;
 
-        if(pressing)
-            spriteRenderer.flipX = moveHorizontal > 0;
+            spriteRenderer.flipX = mousePosition.x - transform.position.x < 0;
     }
 
     void MousePosition()
@@ -102,8 +115,13 @@ public class PlayerProperties : MonoBehaviour
             endurance -= Time.deltaTime;
         }
         else
-            endurance += Time.deltaTime;
+            endurance += enduranceRate * Time.deltaTime;
         enduranceSlider.value = endurance;
+
+        if (endurance < 0)
+            endurance = 0;
+        if (endurance > 100)
+            endurance = 100;
     }
 
     void UpdateEndurance(float val)
@@ -113,17 +131,22 @@ public class PlayerProperties : MonoBehaviour
         if (endurance >= 100) endurance = 100;
     }
 
-    void Attack()
+    async void Attack()
     {
+        if (attacking) return;
+
         attack.Play();
         playerTrigger.transform.DOLocalRotate(new Vector3(0, 0, -360), 0.3f).SetRelative(true).SetEase(Ease.InElastic);
         StartCoroutine(delay());
         GameObject.Find("light attack").GetComponent<AudioSource>().Play();
-       
+        attacking = true;
+        await Boss.Delay(0.3f);
+        attacking = false;
     }
 
-    void HeavyAttack()
+    async void HeavyAttack()
     {
+        if (attacking) return;
         if (endurance < 10) return;
         //Camera.main.DOShakePosition(0.3f, 1);
         UpdateEndurance(-10);
@@ -133,6 +156,9 @@ public class PlayerProperties : MonoBehaviour
         playerTrigger.transform.DOLocalRotate(new Vector3(0, 0, -360), 0.3f).SetRelative(true).SetEase(Ease.InElastic);
         StartCoroutine(delay(2));
         GameObject.Find("heavy attack").GetComponent<AudioSource>().Play();
+        attacking = true;
+        await Boss.Delay(0.6f);
+        attacking = false;
     }
 
     void Grab()
@@ -158,6 +184,7 @@ public class PlayerProperties : MonoBehaviour
             playerTrigger.Throw(Dir, punchForce);
             inner.localRotation = Quaternion.identity;
             throwing = false;
+            endurance -= 20;
         });
         GameObject.Find("throw").GetComponent<AudioSource>().Play();
 
@@ -167,6 +194,12 @@ public class PlayerProperties : MonoBehaviour
     {
         throwing = false;
         grabbed = false;
+    }
+
+    public void Dead()
+    {
+        GameLogic.Print("GAME OVER!");
+        Destroy(gameObject);
     }
 
     IEnumerator delay(float pow = 1)

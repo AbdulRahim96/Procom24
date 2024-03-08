@@ -22,6 +22,8 @@ public class Explosive : MonoBehaviour
                 float dmg = damage / distance;
                 if (player.gameObject.GetComponent<EnemyAI>())
                     player.gameObject.GetComponent<Health>().HealthUpdate(dmg * 5, false);
+                else if (player.gameObject.GetComponent<Boss>())
+                    player.gameObject.GetComponent<Health>().HealthUpdate(dmg / 5, false);
                 else
                     player.gameObject.GetComponent<Health>().HealthUpdate(dmg, false);
                 Rigidbody2D rb = player.gameObject.GetComponent<Rigidbody2D>();

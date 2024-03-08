@@ -11,9 +11,11 @@ public class Health : MonoBehaviour
     public UnityEvent onDieTrigger;
     public GameObject hit;
     public bool isBoss = false;
-
+    bool isDead;
     public void HealthUpdate(float val, bool effect = true)
     {
+        if (isDead) return;
+
         if(isBoss)
         {
             if (!GetComponent<Boss>().velnurable) return;
@@ -30,7 +32,13 @@ public class Health : MonoBehaviour
         {
             healthBar.value = 0;
             // player Dead
+            isDead = true;
             onDieTrigger.Invoke();
+        }
+        if (healthBar.value > maxhealth)
+        {
+            healthBar.value = maxhealth;
+            
         }
     }
 }

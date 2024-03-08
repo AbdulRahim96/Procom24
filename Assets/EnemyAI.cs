@@ -130,6 +130,13 @@ public class EnemyAI : MonoBehaviour
         canAttack = false;
         Instantiate(Coins, transform.position, transform.rotation);
         healthBar.SetParent(transform);
+        if (FindObjectOfType<PlayerTrigger>().obj == transform)
+        {
+            FindObjectOfType<PlayerTrigger>().obj = null;
+            FindObjectOfType<PlayerTrigger>().canGrab = false;
+            FindObjectOfType<PlayerTrigger>().alreadyGrabbed = false;
+        }
         Destroy(gameObject, 0.5f);
+        
     }
 }
