@@ -13,6 +13,7 @@ public class Explosive : MonoBehaviour
         GameObject obj = Instantiate(explosion, transform.position, Quaternion.identity);
         Destroy(obj, 3);
         Collider2D[] players = Physics2D.OverlapCircleAll(transform.position, explosionRadius);
+        CameraShake.instance.impulseShake(2, 0.3f);
 
         foreach (Collider2D player in players)
         {

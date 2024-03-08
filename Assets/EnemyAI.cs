@@ -115,7 +115,7 @@ public class EnemyAI : MonoBehaviour
             if(onAir)
             {
                 GetComponent<Health>().HealthUpdate(20);
-                collision.gameObject.GetComponent<Health>().HealthUpdate(5, false);
+                collision.gameObject.GetComponent<Health>().HealthUpdate(13, false);
                 collision.gameObject.GetComponent<Rigidbody2D>().AddForce(-collision.transform.forward * 50000);
 
                 GameObject obj = Instantiate(hitEffects, transform.position, Quaternion.identity);

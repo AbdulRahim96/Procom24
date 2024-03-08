@@ -21,9 +21,15 @@ public class GameLogic : MonoBehaviour
     void Awake()
     {
         instance = this;
-        isPaused = false;
+        isPaused = true;
+        Time.timeScale = 0;
         bossArrived = false;
         cointext.text = coins.ToString("0");
+    }
+
+    public void SetTime(float time)
+    {
+        countDownTime = time;
     }
 
     // Update is called once per frame
@@ -71,10 +77,12 @@ public class GameLogic : MonoBehaviour
         Instantiate(boss);
         Print("Boss Battle");
 
-        for (int i = 0; i < spawns.Length; i++)
+        /*for (int i = 0; i < spawns.Length; i++)
         {
             spawns[i].SetActive(true);
-        }
+        }*/
+
+        spawns[0].SetActive(true);
 
     }
 

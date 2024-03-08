@@ -357,7 +357,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -2
-  m_Time: 0.03
+  m_Time: 0.06
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.3
@@ -700,7 +700,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -2
-  m_Time: 0.03
+  m_Time: 0.06
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.3
@@ -831,7 +831,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -2
-  m_Time: 0.03
+  m_Time: 0.06
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.3
@@ -1261,9 +1261,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 445e59ad4c1faef4090ab92cb41e6ce3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeBetweenAttack: 10
+  timeBetweenAttack: 5
   AttackDistance: 5
   swordDistance: 0
+  swordSpeed: 0.8
+  swordDuration: 20
+  minTime: 3
+  maxTime: 10
   speed: 0.1
   canAttack: 1
   velnurable: 0
@@ -1753,7 +1757,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -2
-  m_Time: 0.03
+  m_Time: 0.06
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.3
@@ -2603,7 +2607,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -2
-  m_Time: 0.03
+  m_Time: 0.06
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.3
@@ -2734,7 +2738,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -2
-  m_Time: 0.03
+  m_Time: 0.06
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.3
@@ -3124,7 +3128,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -2
-  m_Time: 0.03
+  m_Time: 0.06
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.3
@@ -3383,7 +3387,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -2
-  m_Time: 0.03
+  m_Time: 0.06
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.3

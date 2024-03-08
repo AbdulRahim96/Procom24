@@ -198,7 +198,7 @@ public class PlayerProperties : MonoBehaviour
 
     public void Dead()
     {
-        GameLogic.Print("GAME OVER!");
+        Instantiate(GameLogic.instance.gameoverMenu);
         Destroy(gameObject);
     }
 
@@ -206,5 +206,9 @@ public class PlayerProperties : MonoBehaviour
     {
         yield return new WaitForSeconds(0.15f);
         playerTrigger.Attacking(power * pow);
+        if(pow == 1)
+            CameraShake.instance.impulseShake(0.3f, 0.3f);
+        else
+            CameraShake.instance.impulseShake(1, 0.3f);
     }
 }

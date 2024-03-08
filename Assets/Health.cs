@@ -18,6 +18,14 @@ public class Health : MonoBehaviour
 
         if(isBoss)
         {
+            if(healthBar.value < maxhealth/4)
+            {
+                GetComponent<Boss>().minTime = 2;
+                GetComponent<Boss>().maxTime = 5;
+                GetComponent<Boss>().swordSpeed = 1.5f;
+                GetComponent<Boss>().swordDuration = 40f;
+                GameLogic.Print("He's in Rage! Upgrade yourself");
+            }
             if (!GetComponent<Boss>().velnurable) return;
         }
 

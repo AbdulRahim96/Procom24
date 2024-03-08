@@ -7,8 +7,8 @@ using DG.Tweening;
 public class Boss : MonoBehaviour
 {
     public float timeBetweenAttack;
-    public float AttackDistance = 5, swordDistance;
-    
+    public float AttackDistance = 5, swordDistance, swordSpeed = 0.8f, swordDuration = 20;
+    public float minTime, maxTime;
     public float speed;
     public bool canAttack = true, velnurable;
     public Transform player, sword;
@@ -55,7 +55,7 @@ public class Boss : MonoBehaviour
             {
                 isAttacking = true;
                 RandomAttack();
-                timeBetweenAttack = Random.Range(3, 10);
+                timeBetweenAttack = Random.Range(minTime, maxTime);
             }
         }
 
@@ -68,18 +68,21 @@ public class Boss : MonoBehaviour
         laserAttack.Play();
         GameLogic.Print("Watchout from Laser!");
         laserAttack.GetComponent<AudioSource>().Play();
-        await Delay(8);
+        await Delay(5);
+        CameraShake.instance.Shake();
+        await Delay(3);
         laserLine.SetActive(false);
         isAttacking = false;
+        CameraShake.instance.Stop();
     }
 
     void AttackSword()
     {
         AttackDistance = 1.3f;
-        speed = 0.8f;
+        speed = swordSpeed;
         sword.DOScale(1, 0.5f);
         GameLogic.Print("Move away from the blades!");
-        sword.DOLocalRotate(new Vector3(0, 0, 3600), 20).SetRelative(true).SetEase(Ease.InOutExpo).OnComplete(() =>
+        sword.DOLocalRotate(new Vector3(0, 0, 3600), swordDuration).SetRelative(true).SetEase(Ease.InOutExpo).OnComplete(() =>
         {
             StopSword();
         });
