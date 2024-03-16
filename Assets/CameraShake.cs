@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.DemiLib;
 using Cinemachine;
 
 public class CameraShake : MonoBehaviour
@@ -31,4 +32,17 @@ public class CameraShake : MonoBehaviour
     {
         shake.m_AmplitudeGain = 0;
     }
+
+    /*void FakeDelay(float pow = 1)
+    {
+        GameObject dot = GameObject.Find(".");
+        dot.transform.DOMoveX(1, 0.15f).OnComplete(() =>
+        {
+            playerTrigger.Attacking(power * pow);
+            if (pow == 1)
+                CameraShake.instance.impulseShake(0.3f, 0.3f);
+            else
+                CameraShake.instance.impulseShake(1, 0.3f);
+        });
+    }*/
 }

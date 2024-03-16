@@ -22,9 +22,19 @@ public class PlayerProperties : MonoBehaviour
     public SpriteRenderer spriteRenderer;
     bool attacking;
     private bool pressing;
+
+    [Header("Mobile")]
+    public bool isMobile;
+    public Joystick movestick, aim;
+    public float offsetAngle;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+    }
+
+    public bool isPressed()
+    {
+        return (Mathf.Sqrt(aim.Horizontal) + Mathf.Sqrt(aim.Vertical) != 0);
     }
 
     void Update()
@@ -38,12 +48,12 @@ public class PlayerProperties : MonoBehaviour
         special = Input.GetKey(KeyCode.LeftShift);
         alternate = Input.GetKey(KeyCode.LeftControl);
 
-        if (Input.GetMouseButtonDown(0))
+        /*if (Input.GetMouseButtonDown(0))
         {
             if (special) HeavyAttack();
             else Attack();
 
-        }
+        }*/
 
         if(Input.GetMouseButton(1))
         {
@@ -71,8 +81,21 @@ public class PlayerProperties : MonoBehaviour
     void Movement()
     {
         // Input for movement
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
+        float moveHorizontal;
+        float moveVertical;
+        if (isMobile)
+        {
+            moveHorizontal = movestick.Horizontal;
+            moveVertical = movestick.Vertical;
+        }
+        else
+        {
+            moveHorizontal = Input.GetAxis("Horizontal");
+            moveVertical = Input.GetAxis("Vertical");
+        }
+
+
+
 
         pressing = moveHorizontal != 0;
         // Movement vector
@@ -99,11 +122,14 @@ public class PlayerProperties : MonoBehaviour
 
     void LookAtCursor()
     {
-        
-        Vector3 lookDir = mousePosition - transform.position;
-        float angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg;
+        Vector3 lookDir;
+        if (isMobile)
+            lookDir = new Vector3(aim.Horizontal,aim.Vertical,0);
+        else
+            lookDir = mousePosition - transform.position;
+        float angle = (Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg) + offsetAngle;
 
-        if(!throwing)
+        if(isPressed())
             rb.rotation = angle;
         
     }
@@ -131,7 +157,7 @@ public class PlayerProperties : MonoBehaviour
         if (endurance >= 100) endurance = 100;
     }
 
-    async void Attack()
+    public async void Attack()
     {
         if (attacking) return;
 
@@ -180,7 +206,11 @@ public class PlayerProperties : MonoBehaviour
         grabbed = false;
         inner.DOLocalRotate(new Vector3(0, 0, 360), 0.3f).SetRelative(true).SetEase(Ease.InCubic).OnComplete(() =>
         {
-            Vector3 Dir = mousePosition - transform.position;
+            Vector3 Dir;
+            if(isMobile)
+                Dir = new Vector3(aim.Horizontal, aim.Vertical, 0);
+            else
+                Dir = mousePosition - transform.position;
             playerTrigger.Throw(Dir, punchForce);
             inner.localRotation = Quaternion.identity;
             throwing = false;
@@ -210,5 +240,18 @@ public class PlayerProperties : MonoBehaviour
             CameraShake.instance.impulseShake(0.3f, 0.3f);
         else
             CameraShake.instance.impulseShake(1, 0.3f);
+    }
+
+    void FakeDelay(float pow = 1)
+    {
+        GameObject dot = GameObject.Find(".");
+        dot.transform.DOMoveX(1, 0.15f).OnComplete(() =>
+        {
+            playerTrigger.Attacking(power * pow);
+            if (pow == 1)
+                CameraShake.instance.impulseShake(0.3f, 0.3f);
+            else
+                CameraShake.instance.impulseShake(1, 0.3f);
+        });
     }
 }
